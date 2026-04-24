@@ -5,7 +5,7 @@
 import os
 
 class Config:
-    """Configuration class for Sakila Flask application."""
+   """Configuration class for Sakila Flask application including database, timeout, and health check settings."""
 
     MYSQL_HOST = os.environ.get('MYSQL_HOST', 'sakila-db-server')
     MYSQL_USER = os.environ.get('MYSQL_USER', 'root')
