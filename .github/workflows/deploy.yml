@@ -77,9 +77,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Generate release tag
-        id: tag
-        run: echo "release_tag=v$(date +'%Y.%m.%d')" >> "$GITHUB_OUTPUT"
+     - name: Generate release tag
+  id: tag
+  run: |
+    RELEASE_TAG=v$(date +'%Y.%m.%d')
+    echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
+    echo "RELEASE_TAG=$RELEASE_TAG" >> $GITHUB_ENV
 
       - name: Simulate production deployment
         run: |
@@ -91,7 +94,7 @@ jobs:
           {
             echo "## 🚀 Production Deployment Summary"
             echo "- Status: Successful"
-            echo "- Release: ${{ steps.tag.outputs.release_tag }}"
+            echo "- Release: $RELEASE_TAG"
             echo "- Commit: ${GITHUB_SHA}"
             echo "- Triggered by: ${GITHUB_ACTOR}"
           } >> "${GITHUB_STEP_SUMMARY}"
