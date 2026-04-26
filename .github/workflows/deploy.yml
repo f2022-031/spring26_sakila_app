@@ -65,7 +65,7 @@ jobs:
           } >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Notify staging
-        run: echo "Slack notification: Deployment to staging successful"
+       run: echo 'Slack notification: Deployment to staging successful'
 
 
   deploy-production:
@@ -107,4 +107,4 @@ jobs:
           generate_release_notes: true
 
       - name: Notify production
-        run: echo "Slack notification: Deployment to production successful"
+        run: echo 'Slack notification: Deployment to production successful'
