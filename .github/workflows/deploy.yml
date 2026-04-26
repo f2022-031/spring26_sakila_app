@@ -9,27 +9,25 @@ permissions:
   contents: write
 
 jobs:
-
   deploy-staging:
     runs-on: ubuntu-latest
     environment: staging
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Simulate staging deployment
         run: |
-          echo "Deploying to staging..."
+          echo "Deploying to staging"
           echo "Commit: $GITHUB_SHA"
 
-      - name: Write staging summary
+      - name: Staging summary
         run: |
           echo "## Staging Deployment" >> $GITHUB_STEP_SUMMARY
           echo "Status: Success" >> $GITHUB_STEP_SUMMARY
 
       - name: Notify staging
-        run: echo 'Slack notification: staging success'
+        run: echo 'Staging deployment successful'
 
 
   deploy-production:
@@ -38,16 +36,14 @@ jobs:
     environment: production
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Generate tag
         id: tag
         run: echo "tag=v$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
 
       - name: Simulate production deployment
-        run: |
-          echo "Deploying to production..."
+        run: echo "Deploying to production"
 
       - name: Create release
         uses: softprops/action-gh-release@v2
@@ -56,4 +52,4 @@ jobs:
           name: Release ${{ steps.tag.outputs.tag }}
 
       - name: Notify production
-        run: echo 'Slack notification: production success'
+        run: echo 'Production deployment successful'
