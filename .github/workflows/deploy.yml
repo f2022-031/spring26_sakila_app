@@ -59,15 +59,14 @@ jobs:
 
       - name: Write GitHub Job Summary
         run: |
-          echo "## 🚀 Staging Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Staging Deployment Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| **Branch** | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Commit** | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Branch** | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Commit** | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
           echo "| **Actor** | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Image** | \`${{ env.IMAGE_NAME }}:staging-${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Status** | ✅ Deployed Successfully |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Status** | Deployed Successfully |" >> $GITHUB_STEP_SUMMARY
 
       - name: Notify staging deployment
         run: |
@@ -88,7 +87,7 @@ jobs:
       - name: Set production version tag
         id: version
         run: |
-          VERSION="v$(date +'%Y.%m.%d')-2"
+          VERSION="v$(date +'%Y.%m.%d')-prod"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           echo "Production version: $VERSION"
 
@@ -98,7 +97,6 @@ jobs:
       - name: Build production image
         run: |
           docker build -t ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }} .
-          docker build -t ${{ env.IMAGE_NAME }}:latest .
 
       - name: Print production deployment info
         run: |
@@ -106,24 +104,17 @@ jobs:
           echo "Version:    ${{ steps.version.outputs.VERSION }}"
           echo "Commit SHA: ${{ github.sha }}"
           echo "Actor:      ${{ github.actor }}"
-          echo "Image Tag:  ${{ steps.version.outputs.VERSION }}"
           echo "======================================"
 
       - name: Create GitHub Release
         run: |
-          gh release create ${{ steps.version.outputs.VERSION }} \
+          gh release create "${{ steps.version.outputs.VERSION }}" \
             --title "Release ${{ steps.version.outputs.VERSION }}" \
-            --notes "## Release ${{ steps.version.outputs.VERSION }}
-
-          Deployed commit: ${{ github.sha }}
-          Deployed by: ${{ github.actor }}
-          Branch: ${{ github.ref_name }}
-
-          Successfully deployed to production" \
+            --notes "Deployed commit: ${{ github.sha }} by ${{ github.actor }}" \
             --latest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Notify production deployment
         run: |
-          echo "Slack notification: Deployment to production successful - version ${{ steps.version.outputs.VERSION }} deployed by ${{ github.actor }}"
+          echo "Slack notification: Deployment to production successful - version ${{ steps.version.outputs.VERSION }}"
